@@ -1,49 +1,41 @@
-# Calculator operations
-def add(a, b):
-    return a + b  
+import tkinter as tk
 
-def subtract(a, b):
-    return a - b
-
-def multiply(a, b):
-    return a * b
-
-def divide(a, b):
-    if b == 0:
-        print("Cannot divide by 0!")
-        return None
-    return a / b
-
-# Operation functions dictionary
-operations = {
-    1: ("Add", add),
-    2: ("Subtract", subtract), 
-    3: ("Multiply", multiply),
-    4: ("Divide", divide)
-}
-
-def input_number(prompt):
-    while True:
+def btns(event):
+    text = event.widget.cget("text")
+    if text == "=":
         try:
-            return float(input(prompt))
-        except ValueError:
-            print("Invalid input. Please enter a number")
-
-def calculate():
-    print("Select operation:")
-    for key, (name, _) in operations.items():
-        print(f"{key}. {name}")
-  
-    choice = int(input_number("Enter choice(1-4): "))
-
-    if choice in operations:
-        num1 = input_number("Enter first number: ")
-        num2 = input_number("Enter second number: ")
-        _, func = operations[choice]
-        result = func(num1, num2)
-        if result is not None:
-            print(f"The result is: {result}")
+            result = eval(entry.get())
+            entry.delete(0, tk.END)
+            entry.insert(tk.END, str(result))
+        except:
+            entry.delete(0, tk.END)
+            entry.insert(tk.END, "Error")
+    elif text == "del":
+        entry.delete(0, tk.END)
     else:
-        print("Invalid operation")
+        entry.insert(tk.END, text)
 
-calculate()
+window = tk.Tk()
+window.title("Calculator")
+window.geometry("250x400")
+window.configure(bg="gray")
+
+entry = tk.Entry(window, font=("Helvetica", 20))
+entry.grid(row=0, column=0, columnspan=4, padx=15, pady=10)
+
+buttons = [
+    "1", "2", "3", "+",
+    "4", "5", "6", "-",
+    "7", "8", "9", "*",
+    ".", "0", "=", "/",
+    "del"
+]
+
+for i, text in enumerate(buttons):
+    tk.Button(window, text=text, font=("Helvetica", 15), width=5, height=2).grid(row=1 + i // 4, column=i % 4, padx=5, pady=5)
+
+for widget in window.winfo_children():
+    if isinstance(widget, tk.Button):
+        widget.bind("<Button-1>", btns)
+
+window.mainloop()
